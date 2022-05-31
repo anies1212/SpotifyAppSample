@@ -6,3 +6,11 @@
 //
 
 import Foundation
+
+
+struct PlaylistHeaderViewModels  {
+    let name: String?
+    let ownerName: String?
+    let description: String?
+    let artWorkURL: URL?
+}

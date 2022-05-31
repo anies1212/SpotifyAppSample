@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+struct AlbumCollectiontionViewCellViewModel {
+    let name: String
+    let artistName: String
+}

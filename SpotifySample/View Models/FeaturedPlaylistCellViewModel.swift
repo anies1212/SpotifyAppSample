@@ -6,3 +6,10 @@
 //
 
 import Foundation
+
+struct FeaturedPlaylistCellViewModel {
+    let name: String
+    let artWorkURL: URL?
+    let creatorName: String
+    
+}
