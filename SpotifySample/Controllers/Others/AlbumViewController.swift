@@ -46,6 +46,34 @@ class AlbumViewController: UIViewController {
         collectionView.backgroundColor = .secondarySystemBackground
         collectionView.register(AlbumTrackCollectionViewCell.self, forCellWithReuseIdentifier: AlbumTrackCollectionViewCell.identifier)
         collectionView.register(PlaylistHeaderCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: PlaylistHeaderCollectionReusableView.identifier)
+        fetchAlbumDetails()
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(didTapSave))
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        collectionView.frame = view.bounds
+    }
+    
+    @objc func didTapSave(){
+        let actionSheet = UIAlertController(title: album.name, message: "Actions", preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Add Album", style: .default, handler: {[weak self] _ in
+            guard let strongSelf = self else {return}
+            APICaller.shared.addAlbumToPlaylist(album: strongSelf.album) { success in
+                if success {
+                    print("Successfully added Album")
+                    HapticsManager.shared.vibrate(for: .success)
+                    NotificationCenter.default.post(name: .albumSavedNotification, object: nil)
+                } else {
+                    HapticsManager.shared.vibrate(for: .error)
+                }
+            }
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(actionSheet, animated: true)
+    }
+    
+    private func fetchAlbumDetails(){
         APICaller.shared.getAlbumDetails(for: album) {[weak self] result in
             DispatchQueue.main.async {
                 switch result {
@@ -60,11 +88,6 @@ class AlbumViewController: UIViewController {
                 }
             }
         }
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        collectionView.frame = view.bounds
     }
 }
 
